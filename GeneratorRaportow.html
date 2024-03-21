@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<!-- ##################################################################
+		 Instrukcja obsługi:
+		 W celu udostępnienia strony w IPAD, należy na komputerze służbowym
+		 przekonwertować stronę na DataURI za pomocą strony
+		 https://www.brandonfowler.me/todatauri/ 
+		 Następnie otrzymany link wkleić w pasku adresu i kliknąć enter
+		 Otworzy się strona, którą będzie można dodać do zakładek.
+		 W celu wprowadzenia jakichkolwiek zmian, należy w tym pliku wprowadzić 
+		 modyfikacje, a następnie ponownie przekonwertować stronę na tekst.
+		 
+		 Modyfikowanie oraz udostępnianie niedozwolone bez zgody autora.
+		 Copyright by AddiQ
+		 Last Modification date: 19.03.2024
+		 
+		 ###################################################################
+	-->
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Generator raportu serwisowego</title>
+   <style>
+       body {
+           background-color: #131314;
+           color: white;
+           font-family: sans-serif;
+       }
+       textarea {
+           font-size: 16px;
+           padding: 10px;
+           border-radius: 10px;
+           width: 100%;
+           min-height: 100px;
+           max-height: 300px;
+		   max-width: 1200px;
+           resize: vertical;
+       }
+       button {
+           font-size: 18px;
+           padding: 10px 20px;
+           border-radius: 10px;
+           margin: 5px;
+           background-color: #004A77;
+           color: white;
+       }
+
+
+@media (max-width: 768px) {
+   button {
+       font-size: 20px;
+       padding: 12px 24px;
+   }
+   .ipad-only {
+       display: none;
+   }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+   button {
+       font-size: 22px;
+       padding: 14px 28px;
+   }
+}
+#licznikZnakow {
+  color: white;
+}
+#przycisk-wyczysc {
+           font-size: 18px;
+           padding: 10px 20px;
+           border-radius: 10px;
+           margin: 5px;
+           background-color: red;
+           color: white;
+
+}
+
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  /*border: 1px solid #ccc;
+  background-color: gray; */
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: #004A77;/*inherit;*/
+  float: left;
+  border: 1px solid #ccc;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #005a91;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #003a5e;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+
+   </style>
+</head>
+<body>
+    <h1>Generator raportu serwisowego</h1>
+    
+    <textarea id="poleTekstowe" maxlength="5000" rows="15" cols="40"></textarea><br>
+	
+	<button id="przyciskWyczysc" class="przycisk-wyczysc" onclick="clearTextarea()">Wyczyść</button>
+	<button onclick="copyText()">Kopiuj do schowka</button>
+	<span id="licznikZnakow" style="color: white;"></span>
+    <br>
+    <br>
+    <p>Gotowe formuły:</p>
+
+
+	<div class="tab">
+		<button class="tablinks" onclick="OpenTab(event, 'General')">Ogólne</button>
+		<button class="tablinks" onclick="OpenTab(event, 'Status')">Sprawność tech.</button>
+		<button class="tablinks" onclick="OpenTab(event, 'Maintenance')">Przeglądy</button>
+		<button class="tablinks" onclick="OpenTab(event, 'Mods')">Mody</button>
+		<button class="tablinks" onclick="OpenTab(event, 'Installations')">Instalacje</button>
+
+	</div>
+
+	<div id="General" class="tabcontent">
+		<button onclick="addText('Licznik lampy: ')">Licznik lampy</button>
+		<button onclick="addText('Kontrola aparatu pod kątem poprawności działania.')">Kontrola popr. działania</button>
+		<button onclick="addText('Wykonano kopię zapasową.')">Wykonano Backup</button>
+		<button onclick="addText('Przeprowadzono diagnostykę aparatu pod kątem zgłoszonego problemu.')">Diagnostyka (zgł. prob.)</button>
+		<button onclick="addText('Diagnostyka wykazała problem')">Diagn. wykaz. probl.</button>
+		<button onclick="addText('Diagnostyka nie wykazała problemów.')">Diagn. nie wykaz. probl.</button>
+		<button onclick="addText('Dokonano wpisu w paszporcie.')">Wpis w paszporcie</button>
+		<button onclick="addText('Certyfikat z przeglądu wystawiono w formie elektronicznej w usłudze teamplay Fleet dostępnej pod adresem https://fleet.siemens-healthineers.com/')">Certyfikat teamplayFleet</button>
+		</ br>
+			  	<button onclick="insertDate()">Dzisiejsza data</button>
+	</div>
+	
+	<div id="Status" class="tabcontent">
+		<button onclick="addText('Aparat sprawny.')">Sprawny</button>
+		<button onclick="addText('Aparat sprawny w zakresie wykonywanych czynności.')">Sprawny w zakresie czynności</button>
+		<button onclick="addText('Aparat częściowo sprawny. Praca aparatu odbywa się z ograniczeniami.')">Częściowo sprawny. Praca z ogranicz.</button>
+		<button onclick="addText('Aparat niesprawny.')">Niesprawny</button>
+	</div>
+
+	<div id="Maintenance" class="tabcontent">
+	    <button onclick="addText('Wykonano przegląd okresowy aparatu zgodnie z protokołem przeglądowym.')">Przegląd okr. z protokołem</button>
+		<button onclick="addText('Wykonano przegląd roczny aparatu zgodnie z protokołem przeglądowym.')">Przegląd roczny z protokołem</button>
+	    <button onclick="addText('Wykonano przegląd roczny aparatu.')">Wykonano przegląd roczny</button>
+		<button onclick="addText('Wykonano przegląd okresowy aparatu.')">Wykonano przegląd okresowy</button>
+		<button onclick="addNextReview()">Następny przegląd za pół roku</button>
+		<button onclick="addNextReviewYear()">Następny przegląd za rok</button>    
+		<button onclick="addNextReview_exact()">Data dokładna +6 miesięcy</button>
+		<button onclick="addNextReviewYear_exact()">Data dokładna +12 miesięcy</button>
+	
+	</div>
+
+	<div id="Mods" class="tabcontent">
+		<button onclick="addText('Wykonano modyfikację numer: nr_mod')">Wykonano mod nr</button>
+		<button onclick="addText('Przeprowadzono aktualizację oprogramowania do wersji xxx')">Update softu</button>
+
+	</div>
+	
+	<div id="Installations" class="tabcontent">
+		<button onclick="addText('Wykonano testy jakościowe IQAP')">Testy IQAP</button>
+		<button onclick="addText('Zakończono instalację aparatu.')">Zakończono instalację</button>
+		<button onclick="addText('Wystawiono paszport techniczny.')">Wystawiono paszport</button>
+		<button onclick="addText('Częstotliwość przeglądów: co X miesięcy.')">Częstotliwość przeglądów</button>
+	</div>
+
+
+    <script>
+		function OpenTab(evt, cityName) {
+		  var i, tabcontent, tablinks;
+		  tabcontent = document.getElementsByClassName("tabcontent");
+		  for (i = 0; i < tabcontent.length; i++) {
+			tabcontent[i].style.display = "none";
+		  }
+		  tablinks = document.getElementsByClassName("tablinks");
+		  for (i = 0; i < tablinks.length; i++) {
+			tablinks[i].className = tablinks[i].className.replace(" active", "");
+		  }
+		  document.getElementById(cityName).style.display = "block";
+		  evt.currentTarget.className += " active";
+		}
+
+
+	
+		function copyText() {
+			var textArea = document.getElementById("poleTekstowe");
+			textArea.select();
+			document.execCommand("copy");
+			if (document.selection) {
+				// Internet Explorer
+				textArea.focus();
+				document.selection.clear();
+			} else if (textArea.selectionStart !== undefined) {
+				// Nowoczesne przeglądarki
+				textArea.selectionStart = textArea.selectionEnd = 0;
+			}
+			alert("Skopiowano do schowka!");
+			
+		}
+
+		function addText(text) {
+			var poleTekstowe = document.getElementById("poleTekstowe");
+			var startPosition = poleTekstowe.selectionStart;
+			var textLength = poleTekstowe.value.length;
+
+			var separator = "";
+			if (startPosition === textLength) {
+				separator = "\n";
+			} else {
+				separator = " ";
+			}
+
+			poleTekstowe.value = poleTekstowe.value.substring(0, startPosition) + text + separator + poleTekstowe.value.substring(startPosition);
+
+			poleTekstowe.selectionStart = startPosition + separator.length + text.length;
+			poleTekstowe.selectionEnd = startPosition + separator.length + text.length;
+			
+			usunNadmiaroweSpacje();
+			
+			updateCharacterCount();
+		}
+		function usunNadmiaroweSpacje() {
+			var poleTekstowe = document.getElementById("poleTekstowe");
+			var tekst = poleTekstowe.value;
+
+			// Wyrażenie regularne wychwytujące ciągi dwóch lub więcej spacji
+			var regex = / {2,}/g;
+
+			// Zastąpienie nadmiarowych spacji pojedynczą spacją
+			poleTekstowe.value = tekst.replace(regex, " ");
+
+			updateCharacterCount();
+		}
+		function addTextBackup(text) {
+            var poleTekstowe = document.getElementById("poleTekstowe");
+            var currentValue = poleTekstowe.value;
+            poleTekstowe.value = currentValue + text + "\n";
+            poleTekstowe.scrollTop = poleTekstowe.scrollHeight;
+			// Wywołaj funkcję aktualizacji
+			updateCharacterCount();
+        }
+		
+		function addNextReview() {
+		  // Pobierz aktualną datę
+		  var date = new Date();
+
+		  // Dodaj 6 miesięcy do daty
+		  date.setMonth(date.getMonth() + 6);
+
+		  // Konwersja daty na format "miesiąc słownie i rok"
+		  const months = ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"];
+		  const month = months[date.getMonth()];
+		  const year = date.getFullYear();
+		  const formattedDate = `${month} ${year}`;
+
+		  // Utwórz tekst z datą
+		  var text = "Następny przegląd: " + formattedDate;
+
+		  // Dodaj tekst do elementu
+		  addText(text);
+
+		  // Wywołaj funkcję aktualizacji
+		  updateCharacterCount();
+		}
+        function addNextReview_exact() {
+            var date = new Date();
+            date.setMonth(date.getMonth() + 6);
+            var text = "Następny przegląd: " + date.toLocaleDateString();
+            addText(text);
+			// Wywołaj funkcję aktualizacji
+			updateCharacterCount();
+        }
+		function addNextReviewYear() {
+		  // Pobierz aktualną datę
+		  var date = new Date();
+
+		  // Dodaj 1 rok do daty
+		  date.setFullYear(date.getFullYear() + 1);
+
+		  // Konwersja daty na format "miesiąc słownie i rok"
+		  const months = ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"];
+		  const month = months[date.getMonth()];
+		  const year = date.getFullYear();
+		  const formattedDate = `${month} ${year}`;
+
+		  // Utwórz tekst z datą
+		  var text = "Następny przegląd: " + formattedDate;
+
+		  // Dodaj tekst do elementu
+		  addText(text);
+
+		  // Wywołaj funkcję aktualizacji
+		  updateCharacterCount();
+		}
+
+        function addNextReviewYear_exact() {
+            var date = new Date();
+            date.setFullYear(date.getFullYear() + 1);
+            
+
+            var text = "Następny przegląd: " + date.toLocaleDateString();
+            addText(text);
+			// Wywołaj funkcję aktualizacji
+			updateCharacterCount();
+        }
+		function insertDate() {
+			  var poleTekstowe = document.getElementById("poleTekstowe");
+			  var currentDate = new Date().toLocaleDateString();
+			  poleTekstowe.value += currentDate + "\n";
+			  poleTekstowe.scrollTop = poleTekstowe.scrollHeight;
+			  updateCharacterCount();
+		}
+        function clearTextarea() {
+            var poleTekstowe = document.getElementById("poleTekstowe");
+            poleTekstowe.value = "";
+			poleTekstowe.focus();
+			// Wywołaj funkcję aktualizacji
+			updateCharacterCount();
+        }
+		function updateButtonState() {
+			console.log("Aktualizuję stan przycisku...");
+			var przyciskWyczysc = document.getElementById("przyciskWyczysc");
+			var poleTekstowe = document.getElementById("poleTekstowe");
+			if (poleTekstowe.value === "") {
+				console.log("Pole tekstowe jest puste.");
+				przyciskWyczysc.disabled = true;
+				przyciskWyczysc.style.backgroundColor = "#ddd";
+			} else {
+				console.log("Pole tekstowe nie jest puste.");
+				przyciskWyczysc.disabled = false;
+				przyciskWyczysc.style.backgroundColor = "red";
+			}
+		}
+		function updateCharacterCount() {
+		  var poleTekstowe = document.getElementById("poleTekstowe");
+		  var licznikZnakow = document.getElementById("licznikZnakow");
+		  var maxLiczbaZnakow = 3000; // Maksymalna liczba znaków
+
+		  var liczbaZnakow = poleTekstowe.value.length;
+		  licznikZnakow.textContent = liczbaZnakow + " / " + maxLiczbaZnakow;
+
+		  if (liczbaZnakow > maxLiczbaZnakow) {
+			licznikZnakow.style.color = "red";
+		  } else {
+			licznikZnakow.style.color = "white";
+		  }
+		}
+
+		window.onload = function() {
+		  updateCharacterCount();
+		  usunNadmiaroweSpacje();
+		  poleTekstowe.addEventListener("input", updateCharacterCount);
+		};
+
+
+    </script>
+</body>
+</html>
